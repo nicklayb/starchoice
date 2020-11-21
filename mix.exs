@@ -5,11 +5,7 @@ defmodule Starchoice.MixProject do
     [
       app: :starchoice,
       version: "0.1.0",
-      elixir: "~> 1.8",
-      start_permanent: Mix.env() == :prod,
-      deps: []
+      elixir: "~> 1.8"
     ]
   end
-
-  def application, do: []
 end

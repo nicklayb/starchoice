@@ -1,21 +1,20 @@
 defmodule Starchoice.DecoderTest do
   use ExUnit.Case
-  doctest Starchoice.Decoder
   alias Starchoice.Decoder
 
   defmodule User do
     use Starchoice.Decoder
 
-    decode do
+    defdecoder do
       field(:first_name)
     end
 
-    decode :other do
+    defdecoder :other do
       field(:last_name)
     end
   end
 
-  describe "decode/1" do
+  describe "defdecoder/1" do
     test "creates a default decoder" do
       decoder = %Decoder{
         fields: [first_name: []],
@@ -27,7 +26,7 @@ defmodule Starchoice.DecoderTest do
     end
   end
 
-  describe "decode/2" do
+  describe "defdecoder/2" do
     test "creates a named decoder" do
       other = %Decoder{
         fields: [last_name: []],

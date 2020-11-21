@@ -1,9 +1,22 @@
 defmodule Starchoice do
   alias Starchoice.Decoder
 
+  @moduledoc """
+  Starchoice takes his name from the satellite tv company (now called [Shaw Direct](https://en.wikipedia.org/wiki/Shaw_Direct)) because they are selling TV decoders. Since this lib is used to declare map decoders, I thought it felt appropriate to be named that way. Maybe not. Anyway.
+
+  The goal of the library is to provide a streamline process for convertir String keyed maps to well defined structures. It is highly inspired by [Elm](https://elm-lang.org/)'s JSON decoders where you create different JSON decoders for the same data type.
+
+  For more information about creating decoder, visit the `Starchoice.Decoder` module documentation.
+  """
+
   @type decoder :: Decoder.t() | function() | module() | {module(), atom()}
 
-  @spec decode(any(), decoder()) :: {:ok, any()} | {:error, any()}
+  @type decode_option :: {:as_map, boolean()}
+
+  @doc """
+  Decodes a map into a `{:ok, _} | {:error | _}` tuple format. It accepts the same options and parameters as `decode!/3`
+  """
+  @spec decode(any(), decoder(), [decode_option()]) :: {:ok, any()} | {:error, any()}
   def decode(item, decoder, options \\ []) do
     result = decode!(item, decoder, options)
     {:ok, result}
@@ -12,7 +25,27 @@ defmodule Starchoice do
       {:error, error}
   end
 
-  @spec decode!(any(), decoder()) :: any()
+  @doc """
+  Decodes a map into according to the given decoder. A decoder can either be a `%Starchoice.Decoder{}`, a one or two arity function or a module implementing `Starchoice.Decoder`.
+
+  See module `Starchoice.Decoder` for more information about decoders.
+
+  ## Examples
+
+  ```elixir
+  iex> decoder = %Decoder{struct: User, fields: [first_name: [], age: [with: &String.to_integer/1]]}
+  iex> Decoder.decode!(%{"first_name" => "Bobby Hill", "age" => "13"}, decoder)
+  %User{first_name: "Bobby Hill", age: 13}
+  ```
+
+  If the module `User` implements `Starchoice.Decoder`, it can be used directly
+
+  ```elixir
+  iex> Decoder.decode!(%{"first_name" => "Bobby Hill", "age" => "13"}, User)
+  iex> Decoder.decode!(%{"first_name" => "Bobby Hill", "age" => "13"}, {User, :default}) # same as above
+  ```
+  """
+  @spec decode!(any(), decoder(), [decode_option]) :: any()
   def decode!(items, decoder, options \\ [])
 
   def decode!(items, decoder, options) when is_list(items) do

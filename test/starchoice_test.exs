@@ -1,12 +1,11 @@
 defmodule StarchoiceTest do
   use ExUnit.Case
-  doctest Starchoice
 
   defmodule Profile do
     use Starchoice.Decoder
     defstruct address: nil, zip_code: nil
 
-    decode :basic do
+    defdecoder :basic do
       field(:address)
       field(:zip_code, sanitize: &Profile.escape/1)
     end
@@ -18,7 +17,7 @@ defmodule StarchoiceTest do
     use Starchoice.Decoder
     defstruct title: nil, body: nil
 
-    decode do
+    defdecoder do
       field(:title)
       field(:body, default: "Coming soon...")
     end
@@ -28,7 +27,7 @@ defmodule StarchoiceTest do
     use Starchoice.Decoder
     defstruct id: nil, name: nil, age: nil, posts: [], profile: nil
 
-    decode do
+    defdecoder do
       field(:id, required: true)
       field(:name, sanitize: false)
       field(:age, with: &String.to_integer/1)
@@ -94,7 +93,7 @@ defmodule StarchoiceTest do
 
   describe "decode/3" do
     test "returns error instead of raising" do
-      assert {:erorr, _} = Starchoice.decode(%{}, User)
+      assert {:error, _} = Starchoice.decode(%{}, User)
     end
 
     test "decodes a struct successfully", %{input: input} do
