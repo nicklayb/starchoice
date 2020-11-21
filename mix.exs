@@ -16,7 +16,9 @@ defmodule Starchoice.MixProject do
         {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
         {:credo, "~> 0.6", only: [:dev, :test]},
         {:excoveralls, "~> 0.10", only: :test}
-      ]
+      ],
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [coveralls: :test]
     ]
   end
 
