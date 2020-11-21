@@ -54,7 +54,7 @@ end
 defmodule Permission do
   defstruct name: nil, access: nil
 
-  defdecoder do
+  defdecoder :simple do
     field(:name)
     field(:access, with: &Permission.decode_access/1)
   end
