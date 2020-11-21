@@ -1,5 +1,7 @@
 # Starchoice
 
+[![Build Status](https://travis-ci.com/nicklayb/starchoice.svg?branch=master)](https://travis-ci.com/nicklayb/starchoice)
+
 Starchoice takes his name from the satellite tv company (now called [Shaw Direct](https://en.wikipedia.org/wiki/Shaw_Direct)) because they are selling TV decoders. Since this lib is used to declare map decoders, I thought it felt appropriate to be named that way. Maybe not. Anyway.
 
 The goal of the library is to provide a streamline process for convertir String keyed maps to well defined structures. It is highly inspired by [Elm](https://elm-lang.org/)'s JSON decoders where you create different JSON decoders for the same data type.
