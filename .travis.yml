@@ -1,0 +1,16 @@
+language: 'elixir'
+
+elixir: 1.8.0
+otp_release: 20.2.1
+
+cache:
+  directories:
+  - _build
+  - deps
+
+env:
+  - MIX_ENV=test
+
+script:
+  - mix credo --strict
+  - mix coveralls.travis

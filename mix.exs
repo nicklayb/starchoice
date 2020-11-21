@@ -13,7 +13,9 @@ defmodule Starchoice.MixProject do
       source_url: @github,
       package: package(),
       deps: [
-        {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
+        {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
+        {:credo, "~> 0.6", only: [:dev, :test]},
+        {:excoveralls, "~> 0.10", only: :test}
       ]
     ]
   end
