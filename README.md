@@ -6,6 +6,8 @@ The goal of the library is to provide a streamline process for convertir String 
 
 For more information about creating decoder, visit the `Starchoice.Decoder` module documentation.
 
+[Documentation](https://hexdocs.pm/starchoice)
+
 ## Installation
 
 ```elixir
