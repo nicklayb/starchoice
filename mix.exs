@@ -11,7 +11,10 @@ defmodule Starchoice.MixProject do
       elixir: "~> 1.8",
       description: @description,
       source_url: @github,
-      package: package()
+      package: package(),
+      deps: [
+        {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
+      ]
     ]
   end
 
