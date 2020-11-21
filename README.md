@@ -1,6 +1,7 @@
 # Starchoice
 
 [![Build Status](https://travis-ci.com/nicklayb/starchoice.svg?branch=master)](https://travis-ci.com/nicklayb/starchoice)
+[![Coverage Status](https://coveralls.io/repos/github/nicklayb/starchoice/badge.svg?branch=master)](https://coveralls.io/github/nicklayb/starchoice?branch=master)
 
 Starchoice takes his name from the satellite tv company (now called [Shaw Direct](https://en.wikipedia.org/wiki/Shaw_Direct)) because they are selling TV decoders. Since this lib is used to declare map decoders, I thought it felt appropriate to be named that way. Maybe not. Anyway.
 
@@ -95,3 +96,31 @@ input = %{
 
 The basic of this can easily be achieved by using Ecto. However, for building a HTTP client or packaging lib, it might be a bit overkill to import a whole library like Ecto. This lightweight package can be pretty handy and is quite extensible.
 
+## Polymorphic decoding
+
+This is something that might become helpful. Have for an instance, an API that returns every results under a `results` key like `{"results": [{}, {}, ...]}`. It would be pretty useful to have a polymorphic decoder. It is supported out of the box by doing the following:
+
+```elixir
+defmodule Results do
+  defstruct results: []
+
+  def decoder(sub_type) do
+    __MODULE__
+    |> Starchoice.Decoder.new()
+    |> Starchoice.Decoder.put_field(:results, sub_type)
+  end
+end
+```
+
+Then you can use it like that:
+
+```elixir
+input = %{"results" => [%{"email" => "email@email.com"}, %{"email" => "another_email@email.com"}]}
+Starchoice.decode(input, Results.decoder({User, :simple})) # this uses the :simple decoder defined for User before.
+%Results{
+  results: %{
+    %User{email: "email@email.com"},
+    %User{email: "another_email@email.com"},
+  }
+}
+```

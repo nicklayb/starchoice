@@ -13,6 +13,18 @@ defmodule StarchoiceTest do
     def escape(value), do: String.replace(value, " ", "")
   end
 
+  defmodule Result do
+    defstruct results: []
+
+    def decoder(type) do
+      Starchoice.Decoder.new(__MODULE__, results: [with: type])
+    end
+
+    def decoder_as_map(type) do
+      Starchoice.Decoder.new(:map, results: [with: type])
+    end
+  end
+
   defmodule Post do
     use Starchoice.Decoder
     defstruct title: nil, body: nil
@@ -88,6 +100,33 @@ defmodule StarchoiceTest do
       assert_raise(RuntimeError, fn ->
         Starchoice.decode!(%{}, User)
       end)
+    end
+
+    test "works with polymorphic decoder" do
+      input = %{
+        "results" => [
+          %{"title" => "  Some title  "},
+          %{"title" => "Other title", "body" => "Grown up in saint-hyrène"}
+        ]
+      }
+
+      assert %Result{results: [%Post{}, %Post{}]} =
+               Starchoice.decode!(input, Result.decoder(Post))
+
+      input = %{
+        "results" => [
+          %{zip_code: "a1a1a1"},
+          %{zip_code: "b2b2b2"}
+        ]
+      }
+
+      assert %Result{results: [%Profile{}, %Profile{}]} =
+               Starchoice.decode!(input, Result.decoder({Profile, :basic}))
+
+      assert map_out = Starchoice.decode!(input, Result.decoder_as_map({Profile, :basic}))
+
+      assert %{results: [%Profile{}, %Profile{}]} = map_out
+      refute Map.has_key?(map_out, :__struct__)
     end
   end
 
