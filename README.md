@@ -75,8 +75,8 @@ input = %{
     "address" => "Somewhere str."
   },
   "permissions" => [
-    %{"name" => "Articles", access: "rw"}
-    %{"name" => "Settings", access: "r"}
+    %{"name" => "Articles", "access" => "rw"}
+    %{"name" => "Settings", "access" => "r"}
   ]
 }
 {:ok, decoded} = Starchoice.decode(input, User)
