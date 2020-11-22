@@ -23,6 +23,9 @@ end
 
 ## Basic usage
 
+Examples:
+- [Snowhite](https://github.com/nicklayb/snowhite/tree/master/lib/open_weather): Snowhite uses Starchoice to decode HTTP responses from APIs.
+
 ### Define decoders
 
 You can define decoders in your struct's module by doing the following (this is the macro approach).
