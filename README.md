@@ -1,6 +1,7 @@
 # Starchoice
 
 [![Build Status](https://travis-ci.com/nicklayb/starchoice.svg?branch=master)](https://travis-ci.com/nicklayb/starchoice)
+[![Coverage Status](https://coveralls.io/repos/github/nicklayb/starchoice/badge.svg?branch=master)](https://coveralls.io/github/nicklayb/starchoice?branch=master)
 [![Module Version](https://img.shields.io/hexpm/v/starchoice.svg)](https://hex.pm/packages/starchoice)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/starchoice/)
 [![Total Download](https://img.shields.io/hexpm/dt/starchoice.svg)](https://hex.pm/packages/starchoice)
@@ -28,6 +29,9 @@ end
 ```
 
 ## Basic usage
+
+Examples:
+- [Snowhite](https://github.com/nicklayb/snowhite/tree/master/lib/open_weather): Snowhite uses Starchoice to decode HTTP responses from APIs.
 
 ### Define decoders
 
@@ -61,7 +65,7 @@ end
 defmodule Permission do
   defstruct name: nil, access: nil
 
-  defdecoder do
+  defdecoder :simple do
     field(:name)
     field(:access, with: &Permission.decode_access/1)
   end
@@ -101,6 +105,36 @@ input = %{
 ```
 
 The basic of this can easily be achieved by using Ecto. However, for building a HTTP client or packaging lib, it might be a bit overkill to import a whole library like Ecto. This lightweight package can be pretty handy and is quite extensible.
+
+## Polymorphic decoding
+
+This is something that might become helpful. Have for an instance, an API that returns every results under a `results` key like `{"results": [{}, {}, ...]}`. It would be pretty useful to have a polymorphic decoder. It is supported out of the box by doing the following:
+
+```elixir
+defmodule Results do
+  defstruct results: []
+
+  def decoder(sub_type) do
+    __MODULE__
+    |> Starchoice.Decoder.new()
+    |> Starchoice.Decoder.put_field(:results, sub_type)
+  end
+end
+```
+
+Then you can use it like that:
+
+```elixir
+input = %{"results" => [%{"email" => "email@email.com"}, %{"email" => "another_email@email.com"}]}
+Starchoice.decode(input, Results.decoder({User, :simple})) # this uses the :simple decoder defined for User before.
+%Results{
+  results: %{
+    %User{email: "email@email.com"},
+    %User{email: "another_email@email.com"},
+  }
+}
+```
+
 
 ## License
 

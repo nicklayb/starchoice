@@ -23,7 +23,7 @@ defmodule Starchoice do
   end
 
   @doc """
-  Decodes a map into according to the given decoder. A decoder can either be a `%Starchoice.Decoder{}`, a one or two arity function or a module implementing `Starchoice.Decoder`.
+  Decodes a map into according to the given decoder. A decoder can either be a `%Starchoice.Decoder{}`, a one or two arity function that returns a decoder or a module implementing `Starchoice.Decoder`.
 
   See module `Starchoice.Decoder` for more information about decoders.
 
@@ -57,36 +57,45 @@ defmodule Starchoice do
         value =
           item
           |> Map.get(to_string(field))
-          |> decode_field!(field, opts)
+          |> decode_field!(field, opts, options)
 
         Map.put(map, field, value)
       end)
 
-    if Keyword.get(options, :as_map, false) do
+    if Keyword.get(options, :as_map, struct == :map) do
       fields
     else
       struct(struct, fields)
     end
   end
 
-  def decode!(item, {decoder, sub_decoder}, options) do
-    decode!(item, decoder.__decoder__(sub_decoder), options)
-  end
-
   def decode!(item, decoder, options) do
-    cond do
-      is_function(decoder, 2) ->
-        decoder.(item, options)
+    case fetch_decoder(item, decoder, options) do
+      %Decoder{} = decoder ->
+        decode!(item, decoder, options)
 
-      is_function(decoder, 1) ->
-        decoder.(item)
-
-      true ->
-        decode!(item, {decoder, :default}, options)
+      result ->
+        result
     end
   end
 
-  defp decode_field!(nil, field, opts) do
+  defp fetch_decoder(item, decoder, options) do
+    case decoder do
+      {decoder, sub_decoder} ->
+        decoder.__decoder__(sub_decoder)
+
+      decoder when is_atom(decoder) ->
+        decoder.__decoder__(:default)
+
+      func when is_function(func, 1) ->
+        func.(item)
+
+      func when is_function(func, 2) ->
+        func.(item, options)
+    end
+  end
+
+  defp decode_field!(nil, field, opts, _) do
     cond do
       Keyword.has_key?(opts, :default) ->
         Keyword.get(opts, :default)
@@ -99,25 +108,28 @@ defmodule Starchoice do
     end
   end
 
-  defp decode_field!(value, _, opts) do
-    value =
-      case Keyword.get(opts, :sanitize, true) do
-        true ->
-          sanitize(value)
-
-        func when is_function(func) ->
-          func.(value)
-
-        _ ->
-          value
-      end
+  defp decode_field!(value, _, opts, decode_options) do
+    value = sanitize_field(value, opts)
 
     case Keyword.get(opts, :with) do
       nil ->
         value
 
       decoder ->
-        decode!(value, decoder)
+        decode!(value, decoder, decode_options)
+    end
+  end
+
+  defp sanitize_field(value, opts) do
+    case Keyword.get(opts, :sanitize, true) do
+      true ->
+        sanitize(value)
+
+      func when is_function(func) ->
+        func.(value)
+
+      _ ->
+        value
     end
   end
 
