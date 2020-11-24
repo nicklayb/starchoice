@@ -12,5 +12,6 @@ jobs:
       - checkout
 
       - run: mix local.hex --force
+      - run: mix deps.get
       - run: mix credo --strict
       - run: mix coveralls.circle
