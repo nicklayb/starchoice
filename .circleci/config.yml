@@ -1,20 +1,60 @@
 # Elixir CircleCI 2.0 configuration file
 #
 # Check https://circleci.com/docs/2.0/language-elixir/ for more details
+defaults: &defaults
+  environment:
+    - MIX_ENV: test
+  docker:
+    - image: circleci/elixir:1.8
+
+  working_directory: ~/repo
+
 version: 2
 jobs:
-  build:
-    environment:
-      - MIX_ENV: test
-    docker:
-      - image: circleci/elixir:1.8
-
-    working_directory: ~/repo
+  lint:
+    <<: *defaults
     steps:
       - checkout
-
+      - setup_remote_docker:
+        docker_layer_caching: true
       - run: mix local.hex --force
       - run: mix local.rebar --force
       - run: mix deps.get
       - run: mix credo --strict
+   
+  test:
+    <<: *defaults
+    steps:
+      - checkout
+      - setup_remote_docker:
+        docker_layer_caching: true
+      - run: mix local.hex --force
+      - run: mix local.rebar --force
+      - run: mix deps.get
+      - run: mix test
+      
+  coverage:
+    <<: *defaults
+    steps:
+      - checkout
+      - setup_remote_docker:
+        docker_layer_caching: true
+      - run: mix local.hex --force
+      - run: mix local.rebar --force
+      - run: mix deps.get
       - run: mix coveralls.circle
+workflows:
+  version: 2
+  master:
+    filters:
+      branches:
+        only:
+          - master
+    jobs:
+      - lint
+      - coverage
+      
+  other:
+    jobs:
+      - lint
+      - test
