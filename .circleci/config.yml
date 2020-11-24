@@ -4,6 +4,8 @@
 version: 2
 jobs:
   build:
+    environment:
+      - MIX_ENV: test
     docker:
       - image: circleci/elixir:1.8
 
