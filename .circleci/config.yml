@@ -16,7 +16,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-        docker_layer_caching: true
+          docker_layer_caching: true
       - run: mix local.hex --force
       - run: mix local.rebar --force
       - run: mix deps.get
@@ -27,7 +27,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-        docker_layer_caching: true
+          docker_layer_caching: true
       - run: mix local.hex --force
       - run: mix local.rebar --force
       - run: mix deps.get
@@ -38,7 +38,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-        docker_layer_caching: true
+          docker_layer_caching: true
       - run: mix local.hex --force
       - run: mix local.rebar --force
       - run: mix deps.get
