@@ -1,6 +1,6 @@
 # Starchoice
 
-[![Build Status](https://travis-ci.com/nicklayb/starchoice.svg?branch=master)](https://travis-ci.com/nicklayb/starchoice)
+[![Build Status](https://circleci.com/gh/nicklayb/starchoice.svg?style=svg)](https://circleci.com/gh/nicklayb/starchoice.svg)
 [![Coverage Status](https://coveralls.io/repos/github/nicklayb/starchoice/badge.svg?branch=master)](https://coveralls.io/github/nicklayb/starchoice?branch=master)
 [![Module Version](https://img.shields.io/hexpm/v/starchoice.svg)](https://hex.pm/packages/starchoice)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/starchoice/)
