@@ -45,16 +45,17 @@ jobs:
       - run: mix coveralls.circle
 workflows:
   version: 2
-  master:
-    filters:
-      branches:
-        only:
-          - master
+  flow:
     jobs:
       - lint
-      - coverage
-      
-  other:
-    jobs:
-      - lint
-      - test
+      - coverage:
+        filters:
+          branches:
+            only:
+              - master
+      - test:
+        filters:
+          branches:
+            ignore:
+              - master
+     
