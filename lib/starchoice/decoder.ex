@@ -95,6 +95,7 @@ defmodule Starchoice.Decoder do
           | {:with, Starchoice.decoder()}
           | {:default, any()}
           | {:sanitize, function()}
+          | {:source, String.t()}
   @type field_definition :: {atom(), [field_option()]}
   @type t :: %Starchoice.Decoder{
           struct: module(),
@@ -171,6 +172,7 @@ defmodule Starchoice.Decoder do
   - `:default`: Specifies a fallback value in case the field is missing (can't be used with `required: true`)
   - `:with`: Specifies a decoder the decode the given field. Like the `Starchoice.decode/3` call, it can support any valid decoder in `Module`, `{Module, :decoder}` and a function.
   - `:sanitize`: Specifies a sanitizer. By default, the value is sanitized by trimming the value and casting to nil if the value is "". Can either be a boolean or a function.
+  - `:source`: Specifies the source key in the decoding item
   """
   @spec put_field(t(), atom(), [field_option()]) :: t()
   def put_field(%Decoder{fields: fields} = decoder, field, options \\ []) do

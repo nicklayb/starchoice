@@ -37,7 +37,7 @@ defmodule StarchoiceTest do
 
   defmodule User do
     use Starchoice.Decoder
-    defstruct id: nil, name: nil, age: nil, posts: [], profile: nil
+    defstruct id: nil, name: nil, age: nil, posts: [], profile: nil, unique_identifier: nil
 
     defdecoder do
       field(:id, required: true)
@@ -45,6 +45,7 @@ defmodule StarchoiceTest do
       field(:age, with: &String.to_integer/1)
       field(:posts, with: Post)
       field(:profile, with: {Profile, :basic})
+      field(:unique_identifier, source: :id)
     end
   end
 
@@ -75,7 +76,8 @@ defmodule StarchoiceTest do
                  %Post{title: "Some title", body: "Coming soon..."},
                  %Post{title: "Other title", body: "Grown up in saint-hyrène"}
                ],
-               profile: %Profile{address: nil, zip_code: "A1A1A1"}
+               profile: %Profile{address: nil, zip_code: "A1A1A1"},
+               unique_identifier: 1
              } = Starchoice.decode!(input, User)
     end
 

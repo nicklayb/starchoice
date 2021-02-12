@@ -12,6 +12,10 @@ defmodule Starchoice.DecoderTest do
     defdecoder :other do
       field(:last_name)
     end
+
+    defdecoder :sourced_fields do
+      field(:username, source: :id)
+    end
   end
 
   describe "defdecoder/1" do
@@ -34,6 +38,13 @@ defmodule Starchoice.DecoderTest do
       }
 
       assert ^other = User.__decoder__(:other)
+
+      sourced_fields = %Decoder{
+        fields: [username: [source: :id]],
+        struct: User
+      }
+
+      assert ^sourced_fields = User.__decoder__(:sourced_fields)
 
       default = %Decoder{
         fields: [first_name: []],

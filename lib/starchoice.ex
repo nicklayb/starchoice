@@ -54,9 +54,14 @@ defmodule Starchoice do
   def decode!(item, %Decoder{fields: fields, struct: struct}, options) do
     fields =
       Enum.reduce(fields, %{}, fn {field, opts}, map ->
+        source_name =
+          opts
+          |> Keyword.get(:source, field)
+          |> to_string()
+
         value =
           item
-          |> Map.get(to_string(field))
+          |> Map.get(source_name)
           |> decode_field!(field, opts, options)
 
         Map.put(map, field, value)
