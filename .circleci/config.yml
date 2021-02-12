@@ -1,0 +1,93 @@
+# Elixir CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-elixir/ for more details
+defaults: &defaults
+  environment:
+    - MIX_ENV: test
+  docker:
+    - image: circleci/elixir:1.8
+
+  working_directory: ~/repo
+  
+cache: &cache
+  - restore_cache:
+      key: elixir
+  - run: mix local.hex --force
+  - run: mix local.rebar --force
+  - run: mix deps.get
+  - run: mix compile
+  - save_cache:
+      key: elixir
+      paths:
+        - _build
+        - deps
+
+
+version: 2
+jobs:
+  lint:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: elixir
+      - run: mix local.hex --force
+      - run: mix local.rebar --force
+      - run: mix deps.get
+      - run: mix compile
+      - save_cache:
+          key: elixir
+          paths:
+            - _build
+            - deps
+      - run: mix credo --strict
+   
+  test:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: elixir
+      - run: mix local.hex --force
+      - run: mix local.rebar --force
+      - run: mix deps.get
+      - run: mix compile
+      - save_cache:
+          key: elixir
+          paths:
+            - _build
+            - deps
+      - run: mix test
+      
+  coverage:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: elixir
+      - run: mix local.hex --force
+      - run: mix local.rebar --force
+      - run: mix deps.get
+      - run: mix compile
+      - save_cache:
+          key: elixir
+          paths:
+            - _build
+            - deps
+      - run: mix coveralls.circle
+workflows:
+  version: 2
+  flow:
+    jobs:
+      - lint
+      - coverage:
+          filters:
+            branches:
+              only:
+                - master
+      - test:
+          filters:
+            branches:
+              ignore:
+                - master
+

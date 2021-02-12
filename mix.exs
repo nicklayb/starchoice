@@ -4,6 +4,7 @@ defmodule Starchoice.MixProject do
   @version "0.2.1"
   @description "Map decoding library"
   @github "https://github.com/nicklayb/starchoice"
+
   def project do
     [
       app: :starchoice,
@@ -11,6 +12,10 @@ defmodule Starchoice.MixProject do
       elixir: "~> 1.8",
       description: @description,
       source_url: @github,
+      docs: [
+        main: "readme",
+        extras: ["README.md"]
+      ],
       package: package(),
       deps: [
         {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
@@ -28,7 +33,7 @@ defmodule Starchoice.MixProject do
       links: %{
         "GitHub" => @github
       },
-      files: ["lib", "mix.exs", "mix.lock"],
+      files: ["lib", "mix.exs", "mix.lock", "README.md", "LICENSE"],
       maintainers: ["Nicolas Boisvert"]
     ]
   end

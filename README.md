@@ -1,15 +1,22 @@
 # Starchoice
 
-[![Build Status](https://travis-ci.com/nicklayb/starchoice.svg?branch=master)](https://travis-ci.com/nicklayb/starchoice)
+[![Build Status](https://circleci.com/gh/nicklayb/starchoice.svg?style=svg)](https://circleci.com/gh/nicklayb/starchoice.svg)
 [![Coverage Status](https://coveralls.io/repos/github/nicklayb/starchoice/badge.svg?branch=master)](https://coveralls.io/github/nicklayb/starchoice?branch=master)
+[![Module Version](https://img.shields.io/hexpm/v/starchoice.svg)](https://hex.pm/packages/starchoice)
+[![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/starchoice/)
+[![Total Download](https://img.shields.io/hexpm/dt/starchoice.svg)](https://hex.pm/packages/starchoice)
+[![License](https://img.shields.io/hexpm/l/starchoice.svg)](https://github.com/nicklayb/starchoice/blob/master/LICENSE)
+[![Last Updated](https://img.shields.io/github/last-commit/nicklayb/starchoice.svg)](https://github.com/nicklayb/starchoice/commits/master)
 
-Starchoice takes his name from the satellite tv company (now called [Shaw Direct](https://en.wikipedia.org/wiki/Shaw_Direct)) because they are selling TV decoders. Since this lib is used to declare map decoders, I thought it felt appropriate to be named that way. Maybe not. Anyway.
+<!-- MDOC !-->
 
-The goal of the library is to provide a streamline process for convertir String keyed maps to well defined structures. It is highly inspired by [Elm](https://elm-lang.org/)'s JSON decoders where you create different JSON decoders for the same data type.
+Starchoice takes his name from the satellite TV company (now called [Shaw Direct](https://en.wikipedia.org/wiki/Shaw_Direct)) because they are selling TV decoders. Since this lib is used to declare map decoders, I thought it felt appropriate to be named that way. Maybe not. Anyway.
+
+The goal of the library is to provide a streamline process for converting String keyed maps to well defined structures. It is highly inspired by [Elm](https://elm-lang.org/)'s JSON decoders where you create different JSON decoders for the same data type.
 
 For more information about creating decoder, visit the `Starchoice.Decoder` module documentation.
 
-[Documentation](https://hexdocs.pm/starchoice)
+<!-- MDOC !-->
 
 ## Installation
 
@@ -127,3 +134,8 @@ Starchoice.decode(input, Results.decoder({User, :simple})) # this uses the :simp
   }
 }
 ```
+
+
+## License
+
+This source code is licensed under the [MIT license](https://github.com/nicklayb/starchoice/blob/master/LICENSE). Copyright (c) 2020-present Nicolas Boisvert.
