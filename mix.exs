@@ -1,7 +1,7 @@
 defmodule Starchoice.MixProject do
   use Mix.Project
 
-  @version "0.1.1"
+  @version "0.2.1"
   @description "Map decoding library"
   @github "https://github.com/nicklayb/starchoice"
   def project do
