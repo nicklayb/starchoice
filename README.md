@@ -23,7 +23,7 @@ For more information about creating decoder, visit the `Starchoice.Decoder` modu
 ```elixir
 def deps do
   [
-    {:starchoice, "~> 0.1.0"}
+    {:starchoice, "~> 0.3.0"}
   ]
 end
 ```
