@@ -96,6 +96,7 @@ defmodule Starchoice.Decoder do
           | {:default, any()}
           | {:sanitize, function()}
           | {:source, String.t()}
+  @type using_option :: {:source_mapper, module()}
   @type field_definition :: {atom(), [field_option()]}
   @type t :: %Starchoice.Decoder{
           struct: module(),
@@ -103,13 +104,16 @@ defmodule Starchoice.Decoder do
         }
   @callback __decoder__(atom()) :: t()
 
-  @spec __using__(any()) :: Macro.t()
-  defmacro __using__(_) do
+  @spec __using__([using_option()]) :: Macro.t()
+  defmacro __using__(opts) do
+    source_mapper = Keyword.get(opts, :source_mapper)
+
     quote do
       import Starchoice.Decoder
       @behaviour Starchoice.Decoder
       @before_compile Starchoice.Decoder
       @decoders %{}
+      @source_mapper unquote(source_mapper)
     end
   end
 
@@ -125,13 +129,14 @@ defmodule Starchoice.Decoder do
   @spec field(atom(), [field_option()]) :: Macro.t()
   defmacro field(name, opts \\ []) do
     quote do
-      @options unquote(opts)
+      name = unquote(name)
+      @options Decoder.put_source_option(name, unquote(opts), @source_mapper)
       if Keyword.get(@options, :required, false) and
            Keyword.has_key?(@options, :default) do
-        raise "Field #{unquote(name)} is marked as required but also has a default value"
+        raise "Field #{name} is marked as required but also has a default value"
       end
 
-      @decoder Decoder.put_field(@decoder, unquote(name), @options)
+      @decoder Decoder.put_field(@decoder, name, @options)
     end
   end
 
@@ -177,5 +182,19 @@ defmodule Starchoice.Decoder do
   @spec put_field(t(), atom(), [field_option()]) :: t()
   def put_field(%Decoder{fields: fields} = decoder, field, options \\ []) do
     %Decoder{decoder | fields: [{field, options} | fields]}
+  end
+
+  @doc "Default source mapper"
+  @spec map_source(atom()) :: String.t() | atom()
+  def map_source(field), do: field
+
+  @doc "Puts source option casted from source mapper"
+  @spec put_source_option(atom(), [field_option()], module() | nil) :: String.t() | atom()
+  def put_source_option(_name, options, nil), do: options
+
+  def put_source_option(name, options, source_mapper) do
+    Keyword.put_new_lazy(options, :source, fn ->
+      source_mapper.map_source(name)
+    end)
   end
 end
