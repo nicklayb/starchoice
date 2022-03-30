@@ -61,6 +61,50 @@ defmodule Starchoice.Decoder do
   iex> Starchoice.decode(input, {User, :full})
   ```
 
+  #### Source mapper
+
+  While each field supports a `:source` option to specify what key to use in the
+  parsed map, you can provide a module to perform the casting. If, as an example,
+  the map is using `camelCaseKeys`, you can provide a source mapper that perform
+  the appropriate conversion.
+
+  ```elixir
+  defmodule CamelCase do
+    def map_source(field) do
+      splitted =
+        field
+        |> to_string()
+        |> String.split("_", parts: 2)
+
+      case splitted do
+        [key] -> key
+        [head, rest] -> head <> Macro.camelize(rest)
+      end
+    end
+  end
+
+  defmodule User do
+    defstruct [:first_name, :last_name]
+
+    use Starchoice.Decoder, source_mapper: CamelCase
+
+    defdecoder do
+      field(:first_name)
+      field(:last_name)
+    end
+  end
+
+  iex> map = %{"firstName" => "Bobby", "lastName" => "Hill"}
+  iex> Starchoice.decode(map, User)
+  %User{first_name: "Bobby", last_name: "Hill"}
+
+  iex> map = %{"first_name" => "Bobby", "last_name" => "Hill"}
+  iex> Starchoice.decode(map, User)
+  %User{first_name: nil, last_name: nil}
+  ```
+
+  Doing so is the same as adding individual `:source` option to each field.
+
   ## Manually
 
   You could also build decoder manually like the following:
@@ -130,13 +174,14 @@ defmodule Starchoice.Decoder do
   defmacro field(name, opts \\ []) do
     quote do
       name = unquote(name)
-      @options Decoder.put_source_option(name, unquote(opts), @source_mapper)
-      if Keyword.get(@options, :required, false) and
-           Keyword.has_key?(@options, :default) do
+      options = Decoder.put_source_option(name, unquote(opts), @source_mapper)
+
+      if Keyword.get(options, :required, false) and
+           Keyword.has_key?(options, :default) do
         raise "Field #{name} is marked as required but also has a default value"
       end
 
-      @decoder Decoder.put_field(@decoder, name, @options)
+      @decoder Decoder.put_field(@decoder, name, options)
     end
   end
 
@@ -183,10 +228,6 @@ defmodule Starchoice.Decoder do
   def put_field(%Decoder{fields: fields} = decoder, field, options \\ []) do
     %Decoder{decoder | fields: [{field, options} | fields]}
   end
-
-  @doc "Default source mapper"
-  @spec map_source(atom()) :: String.t() | atom()
-  def map_source(field), do: field
 
   @doc "Puts source option casted from source mapper"
   @spec put_source_option(atom(), [field_option()], module() | nil) :: String.t() | atom()
