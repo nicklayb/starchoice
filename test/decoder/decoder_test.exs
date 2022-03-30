@@ -18,6 +18,37 @@ defmodule Starchoice.DecoderTest do
     end
   end
 
+  defmodule CamelCase do
+    def map_source(field) do
+      field
+      |> to_string()
+      |> Macro.camelize()
+    end
+  end
+
+  defmodule Post do
+    defstruct [:post_title, :post_body]
+    use Starchoice.Decoder, source_mapper: CamelCase
+
+    defdecoder do
+      field(:post_title, source: "RealTitle")
+      field(:post_body)
+    end
+  end
+
+  describe "__using__/1" do
+    test "does not change source if no mapper provided" do
+      assert %Decoder{fields: [{_, options} | _]} = User.__decoder__()
+      refute Keyword.has_key?(options, :source)
+    end
+
+    test "adds source without overriding" do
+      assert %Decoder{fields: fields} = Post.__decoder__()
+      assert "RealTitle" == fields |> Keyword.get(:post_title) |> Keyword.get(:source)
+      assert "PostBody" == fields |> Keyword.get(:post_body) |> Keyword.get(:source)
+    end
+  end
+
   describe "defdecoder/1" do
     test "creates a default decoder" do
       decoder = %Decoder{
